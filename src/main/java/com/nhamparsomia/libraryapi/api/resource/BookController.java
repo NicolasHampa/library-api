@@ -2,6 +2,7 @@ package com.nhamparsomia.libraryapi.api.resource;
 
 import com.nhamparsomia.libraryapi.api.dto.BookDTO;
 import com.nhamparsomia.libraryapi.api.exception.ApiErrors;
+import com.nhamparsomia.libraryapi.exception.BusinessException;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.service.BookService;
 
@@ -43,5 +44,11 @@ public class BookController {
     public ApiErrors handleValidationException(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         return new ApiErrors(bindingResult);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleBusinessException(BusinessException ex) {
+        return new ApiErrors(ex);
     }
 }
