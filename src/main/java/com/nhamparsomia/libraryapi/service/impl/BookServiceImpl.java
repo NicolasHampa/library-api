@@ -1,5 +1,6 @@
 package com.nhamparsomia.libraryapi.service.impl;
 
+import com.nhamparsomia.libraryapi.exception.BusinessException;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.repository.BookRepository;
 import com.nhamparsomia.libraryapi.service.BookService;
@@ -16,6 +17,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
+        if (repository.existsByIsbn(book.getIsbn())) {
+            throw new BusinessException("Isbn já cadastrado.");
+        }
+
         return repository.save(book);
     }
 }
