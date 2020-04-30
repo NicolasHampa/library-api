@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -151,12 +152,40 @@ public class BookControllerTest {
     @DisplayName("Deve retornar resource not found quando o livro procurado não existir")
     public void bookNotFoundTest() throws Exception {
         BDDMockito
-                .given(service.getById(Mockito.anyLong()))
+                .given(service.getById(anyLong()))
                 .willReturn(Optional.empty());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(BOOK_API.concat("/" + 1))
                 .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve deletar um livro")
+    public void deleteBookTest() throws  Exception {
+        Book book = Book.builder().id(11L).build();
+
+        BDDMockito.given(service.getById(anyLong()))
+                .willReturn(Optional.of(book));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API.concat("/" + 1));
+
+        mvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Deve retornar resource not found quando não encontrar livro para deletar")
+    public void deleteNotFoundBookTest() throws  Exception {
+        BDDMockito.given(service.getById(anyLong()))
+                .willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API.concat("/" + 1));
 
         mvc.perform(request)
                 .andExpect(status().isNotFound());
