@@ -27,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -115,6 +117,49 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value(errorMessage));
+    }
+
+    @Test
+    @DisplayName("Deve obter informações de um livro")
+    public void getBookDetailsTest() throws Exception {
+        Long id = Long.valueOf(11);
+
+        Book book = Book.builder()
+                .id(id)
+                .author("Joao")
+                .title("Mundo Java")
+                .isbn("001")
+                .build();
+
+        BDDMockito
+                .given(service.getById(id))
+                .willReturn(Optional.of(book));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API.concat("/" + id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect( jsonPath("id").value(id) )
+                .andExpect( jsonPath("title").value(book.getTitle()) )
+                .andExpect( jsonPath("author").value(book.getAuthor()) )
+                .andExpect( jsonPath("isbn").value(book.getIsbn()) );
+    }
+
+    @Test
+    @DisplayName("Deve retornar resource not found quando o livro procurado não existir")
+    public void bookNotFoundTest() throws Exception {
+        BDDMockito
+                .given(service.getById(Mockito.anyLong()))
+                .willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API.concat("/" + 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
     }
 
     private BookDTO createNewBook() {
