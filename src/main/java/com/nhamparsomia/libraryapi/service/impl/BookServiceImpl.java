@@ -4,6 +4,8 @@ import com.nhamparsomia.libraryapi.exception.BusinessException;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.repository.BookRepository;
 import com.nhamparsomia.libraryapi.service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -47,5 +49,10 @@ public class BookServiceImpl implements BookService {
         }
 
         return this.repository.save(book);
+    }
+
+    @Override
+    public Page<Book> find(Book filter, Pageable pageRequest) {
+        return null;
     }
 }
