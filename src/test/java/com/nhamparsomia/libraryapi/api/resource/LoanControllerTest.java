@@ -6,6 +6,7 @@ import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.entity.Loan;
 import com.nhamparsomia.libraryapi.service.BookService;
 import com.nhamparsomia.libraryapi.service.LoanService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +46,7 @@ public class LoanControllerTest {
     private LoanService loanService;
 
     @Test
-    @DisplayName("Deve realizar um emprestimo")
+    @DisplayName("Deve realizar um emprestimo de livro")
     public void createLoanTest() throws Exception {
         LoanDTO dto = LoanDTO.builder()
                 .isbn("123")
@@ -77,5 +78,30 @@ public class LoanControllerTest {
         mvc.perform(request)
                 .andExpect(status().isCreated())
                 .andExpect(content().string("11"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao tentar realizar emprestimo de um livro inexistente")
+    public void loanWithInvalidIsbnTest() throws Exception {
+
+        LoanDTO dto = LoanDTO.builder()
+                .isbn("123")
+                .customer("Pessoa")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        BDDMockito.given(bookService.getBookByIsbn("123"))
+                .willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(LOAN_API)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value("Book not found for given isbn"));
     }
 }
