@@ -48,7 +48,7 @@ public class BookServiceTest {
 
         Mockito.when(repository.save(book)).thenReturn(
             Book.builder()
-                .id(Long.valueOf(111))
+                .id(11L)
                 .isbn("123")
                 .author("John Doe")
                 .title("Java World")
@@ -136,7 +136,7 @@ public class BookServiceTest {
     @Test
     @DisplayName("Deve atualizar um livro por Id")
     public void updateBookTest() {
-        long id = 11;
+        Long id = 11L;
 
         Book book = Book.builder().id(id).build();
 
@@ -192,6 +192,25 @@ public class BookServiceTest {
         assertThat(result.getContent()).isEqualTo(bookList);
         assertThat(result.getPageable().getPageNumber()).isEqualTo(0);
         assertThat(result.getPageable().getPageSize()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("Deve obter um livro pelo Isbn")
+    public void getBookByIsbnTest() {
+        String isbn = "123";
+
+        Book book = Book.builder().id(11L).isbn(isbn).build();
+
+        Mockito.when(repository.findByIsbn(isbn))
+                .thenReturn(Optional.of(book));
+
+        Optional<Book> retrievedBook = service.getBookByIsbn(isbn);
+
+        assertThat(retrievedBook.isPresent()).isTrue();
+        assertThat(retrievedBook.get().getId()).isEqualTo(11L);
+        assertThat(retrievedBook.get().getIsbn()).isEqualTo(isbn);
+
+        Mockito.verify(repository, Mockito.times(1)).findByIsbn(isbn);
     }
 
     private Book createBook() {
