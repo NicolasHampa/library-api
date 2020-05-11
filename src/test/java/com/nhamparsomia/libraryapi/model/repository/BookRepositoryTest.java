@@ -85,7 +85,7 @@ public class BookRepositoryTest {
         assertThat(deletedBook).isNull();
     }
 
-    private Book createNewBook() {
+    public static Book createNewBook() {
         return Book.builder()
                 .isbn("123")
                 .author("John Doe")
