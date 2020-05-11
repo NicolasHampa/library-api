@@ -2,6 +2,7 @@ package com.nhamparsomia.libraryapi.api.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhamparsomia.libraryapi.api.dto.LoanDTO;
+import com.nhamparsomia.libraryapi.api.dto.ReturnedLoanDTO;
 import com.nhamparsomia.libraryapi.exception.BusinessException;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.entity.Loan;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.BDDMockito;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -133,5 +135,53 @@ public class LoanControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", Matchers.hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value("Book has already been taken by another customer"));
+    }
+
+    @Test
+    @DisplayName("Deve devolver um livro emprestado")
+    public void giveBackBookTest() throws Exception {
+        ReturnedLoanDTO dto = ReturnedLoanDTO.builder()
+                .returned(true)
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        Loan loan = Loan.builder().id(1L).build();
+
+        BDDMockito.given(loanService.getById(Mockito.anyLong()))
+                .willReturn(Optional.of(loan));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(LOAN_API.concat("/1"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isOk());
+
+        Mockito.verify(loanService, Mockito.times(1)).update(loan);
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro 404 ao tentar devolver empréstimo de um livro inexistente")
+    public void tryToGiveBackNotFoundBookTest() throws Exception {
+        ReturnedLoanDTO dto = ReturnedLoanDTO.builder()
+                .returned(true)
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        BDDMockito.given(loanService.getById(Mockito.anyLong()))
+                .willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(LOAN_API.concat("/1"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+
+        Mockito.verify(loanService, Mockito.never()).update(Mockito.any(Loan.class));
     }
 }

@@ -1,6 +1,7 @@
 package com.nhamparsomia.libraryapi.api.resource;
 
 import com.nhamparsomia.libraryapi.api.dto.LoanDTO;
+import com.nhamparsomia.libraryapi.api.dto.ReturnedLoanDTO;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.entity.Loan;
 import com.nhamparsomia.libraryapi.service.BookService;
@@ -39,5 +40,16 @@ public class LoanController {
 
         entity = service.save(entity);
         return entity.getId();
+    }
+
+    @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void giveBackTheBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto) {
+        Loan loan = service.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        loan.setReturned(dto.getReturned());
+
+        service.update(loan);
     }
 }
