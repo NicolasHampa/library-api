@@ -31,5 +31,5 @@ public class Loan {
     private LocalDate loanDate;
 
     @Column
-    private boolean returned;
+    private Boolean returned;
 }
