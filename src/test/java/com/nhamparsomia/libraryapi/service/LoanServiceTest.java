@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -72,6 +73,27 @@ public class LoanServiceTest {
                 .hasMessage("Book has already been taken by another customer");
 
         Mockito.verify(repository, Mockito.never()).save(loanReceivedByRequest);
+    }
+
+    @Test
+    @DisplayName("Deve obter as informações de um empréstimo pelo seu Id")
+    public void getLoanDetailsTest() {
+        Long id = 1L;
+        Loan loan = createLoan();
+        loan.setId(id);
+
+        Mockito.when(repository.findById(id))
+                .thenReturn(Optional.of(loan));
+
+        Optional<Loan> result = service.getById(id);
+
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getId()).isEqualTo(id);
+        assertThat(result.get().getCustomer()).isEqualTo(loan.getCustomer());
+        assertThat(result.get().getBook()).isEqualTo(loan.getBook());
+        assertThat(result.get().getLoanDate()).isEqualTo(loan.getLoanDate());
+
+        Mockito.verify(repository, Mockito.times(1)).findById(id);
     }
 
     private Loan createLoan() {
