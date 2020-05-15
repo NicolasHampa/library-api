@@ -59,6 +59,7 @@ public class LoanControllerTest {
         LoanDTO dto = LoanDTO.builder()
                 .isbn("123")
                 .customer("Pessoa")
+                .customerEmail("pessoa@email.com")
                 .build();
 
         String json = new ObjectMapper().writeValueAsString(dto);
@@ -68,6 +69,7 @@ public class LoanControllerTest {
         Loan loan = Loan.builder()
                 .id(11L)
                 .customer("Pessoa")
+                .customerEmail("pessoa@email.com")
                 .book(book)
                 .loanDate(LocalDate.now())
                 .build();
