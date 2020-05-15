@@ -1,6 +1,7 @@
 package com.nhamparsomia.libraryapi.service;
 
 import com.nhamparsomia.libraryapi.api.dto.LoanFilterDTO;
+import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.entity.Loan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface LoanService {
     Loan update(Loan loan);
 
     Page<Loan> find(LoanFilterDTO filter, Pageable pageable);
+
+    Page<Loan> getLoansByBook(Book book, Pageable pageable);
 }
