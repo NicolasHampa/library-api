@@ -44,4 +44,9 @@ public class LoanServiceImpl implements LoanService {
     public Page<Loan> find(LoanFilterDTO filter, Pageable pageable) {
         return repository.findBookByIsbnOrCustomer(filter.getIsbn(), filter.getCustomer(), pageable);
     }
+
+    @Override
+    public Page<Loan> getLoansByBook(Book book, Pageable pageable) {
+        return repository.findByBook(book, pageable);
+    }
 }
