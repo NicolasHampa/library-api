@@ -2,29 +2,23 @@ package com.nhamparsomia.libraryapi.api.resource;
 
 import com.nhamparsomia.libraryapi.api.dto.BookDTO;
 import com.nhamparsomia.libraryapi.api.dto.LoanDTO;
-import com.nhamparsomia.libraryapi.api.exception.ApiErrors;
-import com.nhamparsomia.libraryapi.exception.BusinessException;
 import com.nhamparsomia.libraryapi.model.entity.Book;
 import com.nhamparsomia.libraryapi.model.entity.Loan;
 import com.nhamparsomia.libraryapi.service.BookService;
 
 import com.nhamparsomia.libraryapi.service.LoanService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/books")
