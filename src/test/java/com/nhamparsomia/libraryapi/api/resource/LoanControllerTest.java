@@ -153,7 +153,8 @@ public class LoanControllerTest {
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        Loan loan = Loan.builder().id(1L).build();
+        Book book = Book.builder().id(1L).isbn("322").build();
+        Loan loan = Loan.builder().id(1L).book(book).build();
 
         BDDMockito.given(loanService.getById(Mockito.anyLong()))
                 .willReturn(Optional.of(loan));
