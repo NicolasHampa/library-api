@@ -3,5 +3,9 @@ sudo: true
 jdk:
   - oraclejdk8
 dist: trusty
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 before_install:
   - chmod +x mvnw
