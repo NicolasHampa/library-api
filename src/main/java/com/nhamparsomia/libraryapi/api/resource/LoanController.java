@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/loans")
 @RequiredArgsConstructor
 @Api("Loan API")
+@Slf4j
 public class LoanController {
 
     private final LoanService service;
@@ -53,6 +55,11 @@ public class LoanController {
                 .build();
 
         entity = service.save(entity);
+
+        log.info("Loan for book with isbn {} successfully created at {}",
+                entity.getBook().getIsbn(),
+                LocalDate.now());
+
         return entity.getId();
     }
 
@@ -66,6 +73,11 @@ public class LoanController {
         loan.setReturned(dto.getReturned());
 
         service.update(loan);
+
+        log.info("Book with isbn {} returned back to library at {}. Loan code: {}",
+                loan.getBook().getIsbn(),
+                LocalDate.now(),
+                loan.getId());
     }
 
     @GetMapping

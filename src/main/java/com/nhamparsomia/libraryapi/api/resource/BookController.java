@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/books")
 @Api("Book API")
+@Slf4j
 public class BookController {
 
     private final BookService service;
@@ -47,6 +49,8 @@ public class BookController {
         Book entity = modelMapper.map(dto, Book.class);
 
         entity = service.save(entity);
+
+        log.info("Book with isbn {} successfully created", entity.getIsbn());
 
         return modelMapper.map(entity, BookDTO.class);
     }
@@ -72,6 +76,8 @@ public class BookController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         service.delete(book);
+
+        log.info("Book with isbn {} successfully deleted", book.getIsbn());
     }
 
     @PutMapping("{id}")
@@ -86,6 +92,8 @@ public class BookController {
         book.setTitle(dto.getAuthor());
 
         book = service.update(book);
+
+        log.info("Book with isbn {} successfully updated", book.getIsbn());
 
         return modelMapper.map(book, BookDTO.class);
     }
