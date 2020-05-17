@@ -1,11 +1,11 @@
 language: java
 sudo: true
 jdk:
-  - oraclejdk8
+  - openjdk11
 dist: trusty
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+      - openjdk-11-jdk
 before_install:
   - chmod +x mvnw
