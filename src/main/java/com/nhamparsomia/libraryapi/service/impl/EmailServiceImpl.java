@@ -19,14 +19,12 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Autowired
-    private SimpleMailMessage mailMessage;
-
     @Override
     public void sendMailToLateLoans(String message, List<String> mailList) {
 
         String[] customersEmailsArray = mailList.toArray(new String[mailList.size()]);
 
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(sender);
         mailMessage.setSubject("Aviso Biblioteca FJ: Você possui mpréstimos em atraso!");
         mailMessage.setText(message);
