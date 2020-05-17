@@ -9,6 +9,8 @@ import com.nhamparsomia.libraryapi.model.entity.Loan;
 import com.nhamparsomia.libraryapi.service.BookService;
 import com.nhamparsomia.libraryapi.service.LoanService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/loans")
 @RequiredArgsConstructor
+@Api("Loan API")
 public class LoanController {
 
     private final LoanService service;
@@ -34,6 +37,7 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Create a new loan")
     public Long create(@RequestBody LoanDTO dto) {
         Book book = bookService
                 .getBookByIsbn(dto.getIsbn())
@@ -54,6 +58,7 @@ public class LoanController {
 
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Returns back to library the book borrowed by customer")
     public void giveBackTheBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto) {
         Loan loan = service.getById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -65,6 +70,7 @@ public class LoanController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Retrieve page result with loans that contains information related to the given parameters")
     public Page<LoanDTO> find(LoanFilterDTO dto, Pageable pageRequest) {
         Page<Loan> result = service.find(dto, pageRequest);
 
